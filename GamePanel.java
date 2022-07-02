@@ -14,9 +14,9 @@ import java.awt.Font;
 
 public class GamePanel extends JPanel implements ActionListener{
 
-	static final int WIDTH = 500;
-	static final int HEIGHT = 500;
-	static final int GRID_BOX = 20;
+	static final int WIDTH = 600;
+	static final int HEIGHT = 600;
+	static final int GRID_BOX = 30;
 	static final int GAME_UNITS = (WIDTH*HEIGHT)/(GRID_BOX*GRID_BOX);
 	static final int DELAY = 75;
 	final int x[] = new int[GAME_UNITS];
@@ -27,6 +27,8 @@ public class GamePanel extends JPanel implements ActionListener{
 	int appleY;
 	int appleA;
 	int appleB;
+	int appleC;
+	int appleD;
 	char direction = 'R';
 	boolean running = false;
 	Timer timer;
@@ -38,6 +40,7 @@ public class GamePanel extends JPanel implements ActionListener{
 		this.setFocusable(true);
 		this.addKeyListener(new MyKeyAdapter());
 		startGame();
+		
 	}
 	public void startGame() {
 		newApple();
@@ -63,15 +66,20 @@ public class GamePanel extends JPanel implements ActionListener{
 			g.fillOval(appleX, appleY, GRID_BOX, GRID_BOX);
 			g.setColor(Color.green);
 			g.fillOval(appleA, appleB, GRID_BOX*2, GRID_BOX*2);
+			g.setColor(Color.BLACK);
+			g.fillOval(appleC, appleD, GRID_BOX/2, GRID_BOX/2);
+			g.setColor(Color.BLACK);
+			g.fillOval(appleC, appleD, GRID_BOX/2, GRID_BOX/2);
+	
 		
 			for(int i = 0; i< bodyParts;i++) {
-				g.setColor(new Color(random.nextInt(50),random.nextInt(50),random.nextInt(50)));
+				g.setColor(new Color(random.nextInt(255),random.nextInt(255),random.nextInt(255)));
 				g.fillRect(x[i], y[i], GRID_BOX, GRID_BOX);			
 			}
 			g.setColor(Color.red);
 			g.setFont( new Font("Ink Free",Font.BOLD, 40));
 			FontMetrics metrics = getFontMetrics(g.getFont());
-			g.drawString("Score: "+applesEaten, (WIDTH - metrics.stringWidth("Score: "+applesEaten))/2, g.getFont().getSize());
+			g.drawString("Score: "+applesEaten, (WIDTH - metrics.stringWidth("Score: " + applesEaten))/2, g.getFont().getSize());
 		}
 		else {
 			gameOver(g);
@@ -86,6 +94,12 @@ public class GamePanel extends JPanel implements ActionListener{
 		appleA = random.nextInt((int)(1000/GRID_BOX))*GRID_BOX;
 		appleB = random.nextInt((int)(1000/GRID_BOX))*GRID_BOX;
 	}
+
+	public void newPosionApple() {
+		appleC = random.nextInt((int)(300/GRID_BOX))*GRID_BOX;
+		appleD = random.nextInt((int)(300/GRID_BOX))*GRID_BOX;
+	}
+
 	public void move(){
 		for(int i = bodyParts; i > 0; i--) {
 			x[i] = x[i-1];
@@ -114,16 +128,26 @@ public class GamePanel extends JPanel implements ActionListener{
 			applesEaten++;
 			newApple();
 			newApple2();
+			newPosionApple();
+
+		}
+		if(x[0] == appleC && y[0] == appleD) {
+			bodyParts= bodyParts-5;
+			applesEaten= applesEaten-5;
+			newApple();
+			newApple2();
+			newPosionApple();
 		}
 		if(x[0] == appleA && y[0] == appleB) {
 			if (applesEaten != 0) {
 			applesEaten+=applesEaten;
 			}
 			else {
-				applesEaten = applesEaten+2;
+				applesEaten += 1;
 			}
-			bodyParts+=bodyParts;
+			bodyParts  += 1;
 			newApple2();
+			newPosionApple();
 		}
 	}
 	public void checkCollisions() {
@@ -164,8 +188,9 @@ public class GamePanel extends JPanel implements ActionListener{
 		g.setColor(Color.red);
 		g.setFont( new Font("Ink Free",Font.BOLD, 75));
 		FontMetrics metrics2 = getFontMetrics(g.getFont());
-		g.drawString("Game Over", (WIDTH - metrics2.stringWidth("Game Over"))/2, HEIGHT/2);
+		g.drawString("Restart", (WIDTH - metrics2.stringWidth("Game Over"))/2, HEIGHT/2);
 	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
@@ -174,8 +199,10 @@ public class GamePanel extends JPanel implements ActionListener{
 			checkApple();
 			checkCollisions();
 		}
+
 		repaint();
 	}
+
 	
 	public class MyKeyAdapter extends KeyAdapter{
 		@Override

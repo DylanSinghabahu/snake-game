@@ -22,3 +22,6 @@ IMPLEMENTATION PLANS:
 UPDATE 1
 - Additional and unique green apple that doubles your total snake length and score
 - Modified the green apple to randomly appear/disappear upon consuming a red apple
+
+UPDATE 2
+- Added a black apple that reduces the snakes length by 5. If this results in the length being <= 0, it's Game Over!
